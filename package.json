@@ -2,7 +2,7 @@
   "name": "nodejs",
   "version": "1.0.0",
   "description": "",
-  "main": "BD6.6-HW1/server.js",
+  "main": "server.js",
   "scripts": {
     "test": "jest"
   },
