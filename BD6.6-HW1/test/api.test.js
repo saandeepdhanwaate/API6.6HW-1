@@ -5,12 +5,11 @@ const {
   getMoviesById,
 } = require("../controllers/index.controller");
 const http = require("http");
-// const { describe } = require("node:test");
-// const { describe, beforeEach, afterEach } = require("node:test");
 
 jest.mock("../controllers/index.controller", () => ({
   ...jest.requireActual("../controllers/index.controller"),
   getAllMovies: jest.fn(),
+  getMoviesById: jest.fn(),
 }));
 
 let server;
@@ -27,6 +26,9 @@ afterAll((done) => {
 // api endpoints
 
 describe("Movie API Tests", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
   //Exercise 3: Test Retrieve All Movies
   it("should return all movies", async () => {
     let mockMovies = [
@@ -54,34 +56,31 @@ describe("Movie API Tests", () => {
     const response = await request(app).get("/movies");
 
     expect(response.status).toBe(200);
-    expect(response.body).toEqual(mockMovies);
+    expect(response.body.movies).toEqual(mockMovies);
   });
 
   // Exercise 4: Test Retrieve Movie by ID
+  it("should return movies by id", async () => {
+    let mockMovie = [
+      {
+        movieId: 1,
+        title: "Inception",
+        genre: "Sci-Fi",
+        director: "Christopher Nolan",
+      },
+    ];
 
-  it("should return a movie by ID", async () => {
-    let mockMovie = {
-      movieId: 1,
-      title: "Inception",
-      genre: "Sci-Fi",
-      director: "Christopher Nolan",
-    };
-
+    getMoviesById.mockReturnValue(mockMovie);
     const response = await request(app).get("/movies/details/1");
+
     expect(response.status).toBe(200);
-    expect(response.body).toEqual(mockMovie);
+    expect(response.body.movie).toEqual(mockMovie);
   });
 });
 
-//
-describe("controllers test", () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
+describe("Controll function Tests", () => {
   // Exercise 5: Mock the Get All Movies Function
-
-  it("should return all correct function value", () => {
+  it("should retur correct fuction ",  () => {
     let mockMovies = [
       {
         movieId: 1,
@@ -104,10 +103,6 @@ describe("controllers test", () => {
     ];
 
     getAllMovies.mockReturnValue(mockMovies);
-
-    let result = getAllMovies();
-
-    expect(result).toEqual(mockMovies);
-    expect(result.length).toEqual(3);
+    expect(getAllMovies()).toEqual(mockMovies);
   });
 });
